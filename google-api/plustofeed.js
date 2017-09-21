@@ -1,4 +1,5 @@
 var http = require("http");
+var Feed = require("../repos/feed");
 
 try {
     var parameters = {
