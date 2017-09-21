@@ -1,9 +1,6 @@
 var http = require("http");
 
 try {
-  // we retrieve the received json from request.parameters and we parse it since we know
-  // it is a stringified json
-  //var parameters = JSON.parse(request.parameters.params);
     var parameters = {
         googleApiKey: request.parameters.googleApiKey,
         googlePlusFeedURL: request.parameters.googlePlusFeedURL
@@ -19,13 +16,16 @@ try {
       key: googleApiKey
     }
   };
-    console.log(googleApiKey);
 
-  var response = http.request(requestParameters);
-  var body = JSON.parse(response.body);
-    var result = jsonToXml(body);
+  var rep = http.request(requestParameters);
+  var body = JSON.parse(rep.body);
+  var result = jsonToXml(body);
     
-  return result;
+  response.addHeaders(configuration.crossDomainHeaders);
+//      response.setHeader("content-type","image/png");
+//        response.setStatus(200);
+  response.write(result);
+  response.close();
 }    
 catch (e) {
     return e;
