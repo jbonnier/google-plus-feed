@@ -25,9 +25,22 @@ try {
   response.addHeaders(configuration.crossDomainHeaders);
 //      response.setHeader("content-type","image/png");
 //        response.setStatus(200);
-  response.write(result);
+
+
+  var xmlDoc = createFeed('');
+
+  response.write(xmlDoc);
   response.close();
 }    
 catch (e) {
     return e;
+}
+
+function createFeed(source) {
+  parser = new DOMParser();
+
+  xmlDoc = parser.parseFromString('', 'text/xml');
+
+  console.log(xmlDoc);
+
 }
