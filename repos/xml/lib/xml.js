@@ -1,4 +1,4 @@
-var escapeForXML = require('./escapeForXML');
+var escapeForXML = require('./escapeForXML.js');
 var Stream = require('stream').Stream;
 
 var DEFAULT_INDENT = '    ';
