@@ -47,7 +47,7 @@ function createFeed(source) {
     body += '\t\t<id>'+source['items'][i]['id']+'</id>\n';
     body += '\t\t<published>'+source['items'][i]['published']+'</published>\n';
     body += '\t\t<updated>'+source['items'][i]['updated']+'</update\n';
-    body += '\t\t<summary type="text">'+source['items'][i]['object']['content']+'</summary>\n';
+    body += '\t\t<summary type="text">'+stripTags(source['items'][i]['object']['content'])+'</summary>\n';
     body += '\t</entry>\n';
   }
   tail = '</feed>';
