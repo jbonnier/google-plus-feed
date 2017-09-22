@@ -1,12 +1,14 @@
-
 var http = require("http");
 try {
   var parameters = {
     googleApiKey: request.parameters.googleApiKey,
-    googlePlusFeedURL: request.parameters.googlePlusFeedURL
+    googlePlusFeedURL: request.parameters.googlePlusFeedURL,
+    auth_token: request.parameters.auth_token
   };
+
   var googleApiKey = parameters.googleApiKey;
   var googlePlusFeedURL = parameters.googlePlusFeedURL;
+  var auth_token = parameters.auth_token;
 
   // Prepare the request to send to Google Places API
   var requestParameters = {
@@ -19,42 +21,50 @@ try {
 
   var rep = http.request(requestParameters);
   var body = JSON.parse(rep.body);
-  var feed = createFeed(body);
+  var feed = createFeed(body, auth_token, googlePlusFeedURL, googleApiKey);
+
   response.addHeaders(configuration.crossDomainHeaders);
-  // response.setHeader("content-type","image/png");
-  // response.setStatus(200);
   response.write(feed);
   response.close();
 }    
 catch (e) {
   return e;
 }
-function createFeed(source) {
+function createFeed(source, token, url, key) {
   var head = '';
   var body = '';
   var tail = '';
-  head += '<feed xmlns="http://www.w3.org/2005/Atom">\n';
+  
+  head += '<?xml version="1.0" encoding="UTF-8"?>\n';
+  head += '<feed\n';
+  head += '\txmlns="http://www.w3.org/2005/Atom"\n';
+  head += '\txmlns:thr="http://purl.org/syndication/thread/1.0"\n';
+  head += '>\n';
   head += '\t<title>'+source['title']+'</title>\n';
-  head += '\t<subtitle></subtitle>\n';
-  head += '\t<link href="..."/>\n';
+  //head += '\t<subtitle></subtitle>\n';
+  head += '\t<link href="https://api.scriptrapps.io/google-api/plustofeed.js" rel="self" type="application/rss+xml" />\n';
   head += '\t<updated>'+source['updated']+'</updated>\n';
+  head += '\t<link rel="alternate" type="text/html" href="'+url+'" />\n';
+  head += '\t<id>https://api.scriptrapps.io/google-api/plustofeed.js</id>\n';
+  
   for(var i = 0; i < source['items'].length; i++)
   {
     body += '\t<entry>\n';
     body += '\t\t<author><name>'+source['items'][i]['actor']['displayName']+'</name></author>\n';
     body += '\t\t<title>'+source['items'][i]['title']+'</title>\n';
-    body += '\t\t<link>'+source['items'][i]['url']+'</link>\n'
-    body += '\t\t<id>'+source['items'][i]['id']+'</id>\n';
+    body += '\t\t<link href="'+source['items'][i]['url']+'"/>\n'
+    body += '\t\t<id>'+source['items'][i]['url']+'</id>\n';
     body += '\t\t<published>'+source['items'][i]['published']+'</published>\n';
-    body += '\t\t<updated>'+source['items'][i]['updated']+'</update\n';
-    body += '\t\t<summary type="text">'+stripTags(source['items'][i]['object']['content'])+'</summary>\n';
+    body += '\t\t<updated>'+source['items'][i]['updated']+'</updated>\n';
+    body += '\t\t<summary type="html">'+stripTags(source['items'][i]['object']['content'])+'</summary>\n';
     body += '\t</entry>\n';
   }
+
   tail = '</feed>';
   return head+body+tail;
 }
 function stripTags(html) {
-  return html.replace(/<[^>]+>/g, ' ');
+  return html.replace(/<[^>]+>/g, '');
 }
 // source : https://github.com/dylang/node-xml
 var XML_CHARACTER_MAP = {
