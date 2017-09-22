@@ -41,13 +41,13 @@ function createFeed(source) {
   for(var i = 0; i < source['items'].length; i++)
   {
     body += '\t<entry>\n';
-    body += '\t\t<author><name>'+source['items'][i]['displayName']+'</name></author>\n';
+    body += '\t\t<author><name>'+source['items'][i]['actor']['displayName']+'</name></author>\n';
     body += '\t\t<title>'+source['items'][i]['title']+'</title>\n';
     body += '\t\t<link>'+source['items'][i]['url']+'</link>\n'
     body += '\t\t<id>'+source['items'][i]['id']+'</id>\n';
     body += '\t\t<published>'+source['items'][i]['published']+'</published>\n';
     body += '\t\t<updated>'+source['items'][i]['updated']+'</update\n';
-    body += '\t\t<summary type="text">'+escapeForXML(stripTags(source['items'][i]['content']))+'</summary>\n';
+    body += '\t\t<summary type="text">'+source['items'][i]['object']['content']+'</summary>\n';
     body += '\t</entry>\n';
   }
   tail = '</feed>';
